@@ -51,7 +51,7 @@ if __name__ == "__main__":
     force = args.force_overwrite
 
     if not os.path.exists(input_file):
-        print("Input file does not exists")
+        print("Input file {} does not exists".format(input_file))
         exit(1)
 
     if os.path.exists(output_clusters):
@@ -120,10 +120,10 @@ if __name__ == "__main__":
                 if is_duplicate and cluster_1 is not cluster_2:
                     clusters.remove(cluster_1)
                     clusters.remove(cluster_2)
-                    new = cluster_1.union(cluster_2)
-                    for qid in new:
-                        mapping[qid] = new
-                    clusters.add(new)
+                    new_cluster = cluster_1.union(cluster_2)
+                    for qid in new_cluster:
+                        mapping[qid] = new_cluster
+                    clusters.add(new_cluster)
 
             # first is in some cluster and second is not
             elif cluster_1 is not None and cluster_2 is None:
