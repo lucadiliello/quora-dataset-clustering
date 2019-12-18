@@ -12,11 +12,11 @@ if __name__ == "__main__":
     parser.add_argument("-i", "--input_file", required=True, type=str,
                         help="Clusters dataset in CSV format")
     parser.add_argument("-m", "--question_mapping", required=True, nargs='+', type=int,
-                        help="id-question pairs in CSV format")
+                        help="id-question pairs file (saved as CSV)")
     parser.add_argument("-o", "--output_file", required=True, type=str,
-                        help="Output file name")
+                        help="Output file name (saved as CSV)")
     parser.add_argument("-f", "--force_overwrite", action="store_true",
-                        help="Output file IS overwritten if it does already exists")
+                        help="output_file and question_mapping are overwritten if they do already exists")
 
     args = parser.parse_args()
 
@@ -39,6 +39,7 @@ if __name__ == "__main__":
     
 
     #### JOIN and SAVE ####
+    raise NotImplemented("This functionality has not been implemented yet")
 
     print("Done!")
 

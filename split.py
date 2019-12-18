@@ -53,7 +53,7 @@ if __name__ == "__main__":
                 filtered += 1  
             tot += 1  
 
-    print("Filtered {} out of {} clusters because of len size less than {}".format(filtered, tot, min_cluster_size))
+    print("Filtered {} out of {} clusters because of size smaller than {}".format(filtered, tot, min_cluster_size))
             
     # shuffle dataset on the first row
     shuffle(clusters)

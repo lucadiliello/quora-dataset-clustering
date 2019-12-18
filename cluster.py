@@ -33,13 +33,13 @@ class ClusterList:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Split Quora Pair Question dataset in clusters')
+    parser = argparse.ArgumentParser(description='Split Quora-Question-Pairs dataset in clusters')
     parser.add_argument("-i", "--input_file", required=True, type=str,
-                        help="Quora dataset in CSV format")
+                        help="Quora dataset (in CSV format)")
     parser.add_argument("-o", "--output_clusters", required=True, type=str,
-                        help="Output file in which each cluster will be saved, line by line")
+                        help="Output file in which each cluster will be saved (in CSV)")
     parser.add_argument("-m", "--output_question_mappings", required=True, type=str,
-                        help="Output file in which the pair id-question will be saved")
+                        help="Output file in which the pair id-question will be saved (in CSV)")
     parser.add_argument("-f", "--force_overwrite", action="store_true",
                         help="Output files are overwritten if they already exists")
      
@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
     input_file = args.input_file
     output_clusters = args.output_clusters
-    output_question = args.output_question
+    output_question = args.output_question_mappings
     force = args.force_overwrite
 
     if not os.path.exists(input_file):
@@ -158,5 +158,6 @@ if __name__ == "__main__":
             f.write("{},{}\n".format(key, value))
 
     print()
+    # print(sum([len(c) if len(c) > 1 else 0 for c in clusters])) # number of questions with at least a similar one
     print("There are {} question divided in {} clusters".format(len(questions), len(clusters)))
 
