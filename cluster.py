@@ -38,7 +38,7 @@ if __name__ == "__main__":
                         help="Quora dataset in CSV format")
     parser.add_argument("-o", "--output_clusters", required=True, type=str,
                         help="Output file in which each cluster will be saved, line by line")
-    parser.add_argument("-q", "--output_question", required=True, type=str,
+    parser.add_argument("-m", "--output_question_mappings", required=True, type=str,
                         help="Output file in which the pair id-question will be saved")
     parser.add_argument("-f", "--force_overwrite", action="store_true",
                         help="Output files are overwritten if they already exists")

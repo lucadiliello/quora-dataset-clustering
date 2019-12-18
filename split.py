@@ -16,7 +16,7 @@ if __name__ == "__main__":
     parser.add_argument("-o", "--output_folder", type=str, required=True,
                         help="The folder in which results should be saved")
     parser.add_argument("-f", "--force_overwrite", action="store_true",
-                        help="Output files are overwritten if they already exists")
+                        help="Output files are overwritten if they do already exists")
      
     args = parser.parse_args()
 
