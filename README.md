@@ -25,7 +25,7 @@ python cluster.py -i questions.csv -o clusters.csv -m mappings.csv
 Split dataset in 3 parts with size `50%` `30%` `20%`, considering only clusters containing at least 3 questions:
 
 ```bash
-python split.py -i clusters.csv -s 50 30 20 -u 2 -o splits_folder
+python split.py -i clusters.csv -s 50 30 20 -u 3 -o splits_folder
 ```
 
 Create the real datasets files with a balanced number of True and False pairs and automatic lenght detection
