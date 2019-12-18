@@ -66,9 +66,10 @@ if __name__ == "__main__":
         data = clusters[last_index : last_index + split_len]
         last_index += split_len
 
-        with open(filepath, "w") as f:
+        with open(filepath, mode='w') as f:
+            writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC)
             for c in data:
-                f.write(",".join(c) + "\n")
+                writer.writerow(c)
 
     print("Done!")
 

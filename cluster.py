@@ -149,13 +149,15 @@ if __name__ == "__main__":
 
     clusters.clean()
 
-    with open(output_clusters, "w") as f:
+    with open(output_clusters, mode='w') as f:
+        writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC)
         for c in clusters:
-            f.write(",".join([str(x) for x in c]) + "\n")
+            writer.writerow(c)
 
-    with open(output_question, "w") as f:
+    with open(output_question, mode='w') as f:
+        writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC)
         for key, value in questions.items():
-            f.write("{},{}\n".format(key, value))
+            writer.writerow([key, value])
 
     print()
     # print(sum([len(c) if len(c) > 1 else 0 for c in clusters])) # number of questions with at least a similar one
