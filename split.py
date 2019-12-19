@@ -23,7 +23,7 @@ if __name__ == "__main__":
                         help="The folder in which results should be saved")
     parser.add_argument("-f", "--force_overwrite", action="store_true",
                         help="Output files are overwritten if they do already exists")
-    parser.add_argument("-s", "--seed", required=False, default=999, type=int,
+    parser.add_argument("--seed", required=False, default=999, type=int,
                     help="seed for shuffling")
      
     args = parser.parse_args()
@@ -62,7 +62,7 @@ if __name__ == "__main__":
                 clusters.append(row)
             else:
                 filtered += 1  
-            tot += 1  
+            tot += 1
 
     print("Filtered {} out of {} clusters because of size smaller than {}".format(filtered, tot, min_cluster_size))
             

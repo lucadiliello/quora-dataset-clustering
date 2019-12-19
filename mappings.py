@@ -59,10 +59,12 @@ if __name__ == "__main__":
         for i, row in enumerate(csv_reader):    
             mappings[int(row[0])] = row[1].strip()
 
+    # specific id-question pair for this split file
     res_mappings = dict()
     for id in questions_ids:
         res_mappings[id] = mappings[id]
 
+    # write mapping to the output_mapping file
     with open(output_mapping, mode='w') as f:
         writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC)
         for key, value in res_mappings.items():
