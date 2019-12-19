@@ -1,6 +1,7 @@
 """
-Given a set of clusters, generate a dataset with a specified number of true or false labels
+Given a set of clusters, generate a dataset with a specified number of true or false labels.
 """
+
 
 import os
 import argparse

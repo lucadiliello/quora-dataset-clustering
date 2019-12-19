@@ -1,11 +1,17 @@
+"""
+Given a dataset of question pairs, create a list of clusters such that
+questions in the same cluster are labelled as duplicates (have the same meaning).
+"""
+
+
 import os
 import argparse
 import csv
 
-"""
-Manage a list with possible "holes" for efficiency
-"""
 class ClusterList:
+    """
+    Manage a list with possible "holes" for efficiency
+    """
     def __init__(self):
         self.list = []
         self.free_indexes = []

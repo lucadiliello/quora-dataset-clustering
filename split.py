@@ -1,3 +1,9 @@
+"""
+Given a file containing a list of clusters, split them in different files with the
+given size such that a question appears only in a cluster.
+"""
+
+
 import os
 import argparse
 import csv
@@ -5,7 +11,7 @@ from random import shuffle
 import shutil
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Split clusters generated with cluster.py in train/valid/test sets')
+    parser = argparse.ArgumentParser(description='Split clusters generated with cluster.py in some smaller sets')
     parser.add_argument("-i", "--input_file", required=True, type=str,
                         help="Clusters dataset in CSV format")
     parser.add_argument("-s", "--splits", required=True, nargs='+', type=int,
