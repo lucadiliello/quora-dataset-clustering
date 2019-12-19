@@ -6,7 +6,7 @@ Given a set of clusters, generate a dataset with a specified number of true or f
 import os
 import argparse
 import csv
-from random import shuffle, randint, sample, choice
+import random
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Join a set of clusters with the correspoding questions')
@@ -22,6 +22,8 @@ if __name__ == "__main__":
                         help="ratio between True and False pairr")
     parser.add_argument("-n", "--number", required=False, default=None, type=int,
                         help="output_file and question_mapping are overwritten if they do already exists")
+    parser.add_argument("-s", "--seed", required=False, default=999, type=int,
+                        help="seed for shuffling")
 
     args = parser.parse_args()
 
@@ -31,6 +33,9 @@ if __name__ == "__main__":
     force = args.force_overwrite
     ratio = args.ratio
     number = args.number
+    seed = args.seed
+
+    random.seed(seed)
 
     if not os.path.exists(input_file):
         print("Input file {} does not exists".format(input_file))
@@ -73,14 +78,14 @@ if __name__ == "__main__":
     # adding negative candidates
     for i in range(false_needed):
 
-        cluster1, cluster2 = sample(clusters, 2)
-        qid1 = choice(cluster1)
-        qid2 = choice(cluster2)
+        cluster1, cluster2 = random.sample(clusters, 2)
+        qid1 = random.choice(cluster1)
+        qid2 = random.choice(cluster2)
         final.append(
             [qid1, qid2, questions[qid1], questions[qid2], False]
         )
 
-    shuffle(final)
+    random.shuffle(final)
     # if specified N is bigger than available data, keep actual size
     final = final[:min(number, len(final))]    
 

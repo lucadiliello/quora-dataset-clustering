@@ -18,7 +18,7 @@ if __name__ == "__main__":
                         help="Output file in which each question id is mapped to a question")
     parser.add_argument("-f", "--force_overwrite", action="store_true",
                         help="Output files are overwritten if they already exists")
-     
+    
     args = parser.parse_args()
 
     input_split = args.input_split

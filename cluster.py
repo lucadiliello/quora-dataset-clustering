@@ -48,7 +48,7 @@ if __name__ == "__main__":
                         help="Output file in which the pair id-question will be saved (in CSV)")
     parser.add_argument("-f", "--force_overwrite", action="store_true",
                         help="Output files are overwritten if they already exists")
-     
+  
     args = parser.parse_args()
 
     input_file = args.input_file

@@ -7,7 +7,7 @@ given size such that a question appears only in a cluster.
 import os
 import argparse
 import csv
-from random import shuffle
+import random
 import shutil
 
 if __name__ == "__main__":
@@ -23,6 +23,8 @@ if __name__ == "__main__":
                         help="The folder in which results should be saved")
     parser.add_argument("-f", "--force_overwrite", action="store_true",
                         help="Output files are overwritten if they do already exists")
+    parser.add_argument("-s", "--seed", required=False, default=999, type=int,
+                    help="seed for shuffling")
      
     args = parser.parse_args()
 
@@ -31,6 +33,9 @@ if __name__ == "__main__":
     output_folder = args.output_folder
     force = args.force_overwrite
     min_cluster_size = args.min_cluster_size
+    seed = args.seed
+
+    random.seed(seed)
 
     assert sum([int(x) for x in splits]) == 100, "Splits MUST sum to 100"
 
@@ -62,7 +67,7 @@ if __name__ == "__main__":
     print("Filtered {} out of {} clusters because of size smaller than {}".format(filtered, tot, min_cluster_size))
             
     # shuffle dataset on the first row
-    shuffle(clusters)
+    random.shuffle(clusters)
 
     last_index = 0
     for i, s in enumerate(splits):
