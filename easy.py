@@ -66,7 +66,7 @@ if __name__ == "__main__":
     # Check over arguments
     assert sum([int(x) for x in splits]) == 100, "Splits MUST sum to 100"
     assert translations is None or do_generation, "translation requires do_generation"
-    assert len(splits) == len(max_number) or not max_number, "You must provide the same number of splits and max_numbers"
+    assert not max_number or len(splits) == len(max_number), "You must provide the same number of splits and max_numbers"
 
     # Check file existence
     assert os.path.exists(input_file), "Input file {} does not exists".format(input_file)
@@ -109,7 +109,7 @@ if __name__ == "__main__":
 
     ...
     """
-    
+
     # Generate
     if do_generation:
         res = generate(res, mapping, ratio=ratio, max_number=max_number)
