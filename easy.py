@@ -109,7 +109,7 @@ if __name__ == "__main__":
 
     ...
     """
-
+    
     # Generate
     if do_generation:
         res = generate(res, mapping, ratio=ratio, max_number=max_number)
