@@ -36,7 +36,9 @@ if __name__ == "__main__":
                     help="seed for shuffling")
 
     parser.add_argument("-r", "--ratio", required=False, default=0.5, type=float,
-                        help="ratio between True and False pairr")
+                        help="ratio between True and False pair")
+    parser.add_argument("--hard_negative_dataset", required=False, default=None, type=int,
+                        help="Build a hard negative dataset where each mini batch of size h has 1 positive label and h-1 negative ones")
     
     parser.add_argument("-g", "--do_generation", action="store_true",
                         help="Generate the datasets, otherwise only the splits of the clusters will be saved")
@@ -56,6 +58,7 @@ if __name__ == "__main__":
     ratio = args.ratio
     max_number = args.max_number
     do_generation = args.do_generation
+    hard_negative = args.hard_negative_dataset
 
     # Translation
     translations = args.translation
@@ -78,11 +81,17 @@ if __name__ == "__main__":
     os.mkdir(output_folder)
 
     # Import data
-    input_data = None
     with open(input_file) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         next(csv_reader, None)
         input_data = list(csv_reader)
+    
+    if translations is not None:
+        with open(translations) as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=',')
+            translations_dict = { int(row[0]): row[1].strip() for row in csv_reader}
+    else:
+        translations_dict = None
 
     # Clusterize
     clusters, mapping = cluster(input_data)
@@ -112,7 +121,8 @@ if __name__ == "__main__":
 
     # Generate
     if do_generation:
-        res = generate(res, mapping, ratio=ratio, max_number=max_number)
+        res = generate(res, mapping, ratio=ratio, max_number=max_number, hard_negative=hard_negative,
+                       translations=translations_dict if translations is not None else None)
         """
         3123,3123,"Am I italian?","Am I english?",False
         23212,44,"What did Giovannino say?","What did Massimino say?",False
@@ -124,30 +134,30 @@ if __name__ == "__main__":
         """
 
         if translations is not None:
-            # Import data
-            translations_dict = {}
-            with open(translations) as csv_file:
-                csv_reader = csv.reader(csv_file, delimiter=',')
-                for row in csv_reader:
-                    translations_dict[int(row[0])] = row[1].strip()
-                
-            res = translate(res, translations_dict, mapping)
+            translated = translate(res, translations_dict, mapping)
+
             """
             3123,3123,"Sono italiano?","Sono inglese?",False
-            23212,44,"Cosa ha detto Giovannino?","Cosa ha detto Massimino?",False
+            23212,44,"Cosa ha detto Giovannino?","Cosa ha detto Wender?",True
             ...
 
             1233,33,"È una bella giornata?","C'è il sole?",True
             980,99,"Lei ha due carte di credito?","Perchè la gente fa domande su Quora mentre potrebbe chiedere a Google?",False
             ...
             """
-
+        
     for i, split in enumerate(splits):
-        # write mapping to the output_mapping file
-        with open(os.path.join(output_folder, "{}-{}.csv".format(i, split)), mode='w') as f:
+        # writing originale eng questions
+        with open(os.path.join(output_folder, "{}-{}-en.csv".format(i, split)), mode='w') as f:
             writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC)
             for a in res[i]:
                 writer.writerow(a)
+        # if requested, write also translated versions of the questions
+        if translations is not None:
+            with open(os.path.join(output_folder, "{}-{}-it.csv".format(i, split)), mode='w') as f:
+                writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC)
+                for a in translated[i]:
+                    writer.writerow(a)
 
     print("Results written to {}, exiting!".format(output_folder))
 
