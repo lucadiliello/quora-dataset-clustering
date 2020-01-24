@@ -9,13 +9,14 @@ import csv
 import random
 import shutil
 
-def split(clusters, min_cluster_size=2, splits=[50,30,20]):
+def split(clusters, min_cluster_size=1, max_cluster_size=1000, splits=[50,30,20]):
     
     print("Starting splitting...")
-    new_clusters = [cluster for cluster in clusters if len(cluster) >= min_cluster_size]
+    new_clusters = [cluster for cluster in clusters if 
+        len(cluster) >= min_cluster_size and len(cluster) <= max_cluster_size]
 
-    print("Filtered {} out of {} clusters because of size smaller than {}".format(
-        len(clusters) - len(new_clusters), len(clusters), min_cluster_size))
+    print("Filtered {} out of {} clusters because of size not in {} - {}".format(
+        len(clusters) - len(new_clusters), len(clusters), min_cluster_size, max_cluster_size))
     clusters = new_clusters
             
     # shuffle dataset on the first row

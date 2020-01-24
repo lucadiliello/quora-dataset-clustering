@@ -32,6 +32,8 @@ if __name__ == "__main__":
                         help="max number of entries for each split. Default is maximum, computed based on ratio")
     parser.add_argument("-u", "--min_cluster_size", required=False, default=1, type=int,
                         help="Consider only clusters with a size >= than argument")
+    parser.add_argument("-m", "--max_cluster_size", required=False, default=1000, type=int,
+                        help="Consider only clusters with a size <= than argument")
     parser.add_argument("--seed", required=False, default=999, type=int,
                     help="seed for shuffling")
 
@@ -53,6 +55,7 @@ if __name__ == "__main__":
     # Splits
     splits = args.splits
     min_cluster_size = args.min_cluster_size
+    max_cluster_size = args.max_cluster_size
 
     # Generation
     ratio = args.ratio
@@ -106,7 +109,7 @@ if __name__ == "__main__":
     """
 
     # Split
-    res = split(clusters, min_cluster_size=min_cluster_size, splits=splits)
+    res = split(clusters, min_cluster_size=min_cluster_size, max_cluster_size=max_cluster_size, splits=splits)
     """
     3123,3123
     23212,44
