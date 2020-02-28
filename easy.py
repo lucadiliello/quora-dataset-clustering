@@ -10,8 +10,6 @@ import random
 import shutil
 from cluster import cluster
 from split import split
-from generate import generate
-from translate import translate
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Split Quora-Question-Pairs dataset in clusters')
@@ -41,7 +39,9 @@ if __name__ == "__main__":
                         help="ratio between True and False pair")
     parser.add_argument("--hard_negative_dataset", required=False, default=None, type=int,
                         help="Build a hard negative dataset where each mini batch of size h has 1 positive label and h-1 negative ones")
-    
+    parser.add_argument("--maximize_similarity", required=False, default=None, type=int,
+                        help="Doing hard negative dataset, use very similar (to the first question) negative(s)")
+
     parser.add_argument("-g", "--do_generation", action="store_true",
                         help="Generate the datasets, otherwise only the splits of the clusters will be saved")
 
@@ -62,6 +62,7 @@ if __name__ == "__main__":
     max_number = args.max_number
     do_generation = args.do_generation
     hard_negative = args.hard_negative_dataset
+    maximize_similarity = args.maximize_similarity
 
     # Translation
     translations = args.translation
@@ -124,8 +125,10 @@ if __name__ == "__main__":
 
     # Generate
     if do_generation:
+        from generate import generate
         res = generate(res, mapping, ratio=ratio, max_number=max_number, hard_negative=hard_negative,
-                       translations=translations_dict if translations is not None else None)
+                       translations=translations_dict if translations is not None else None,
+                       maximize_similarity=maximize_similarity)
         """
         3123,3123,"Am I italian?","Am I english?",False
         23212,44,"What did Giovannino say?","What did Massimino say?",False
@@ -137,6 +140,7 @@ if __name__ == "__main__":
         """
 
         if translations is not None:
+            from translate import translate
             translated = translate(res, translations_dict, mapping)
 
             """

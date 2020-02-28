@@ -7,12 +7,18 @@ import argparse
 import csv
 import random
 import math
+import numpy as np
+from torch.nn.functional import cosine_similarity
+from similarity import score
+import torch
 
-def generate(input_data, mapping, ratio=0.5, max_number=None, hard_negative=None, translations=None):
+def generate(input_data, mapping, ratio=0.5, 
+             max_number=None, hard_negative=None, translations=None, maximize_similarity=None):
     print("Starting generation")
 
     # use first id
     inverse_mapping = {value[0]: key for (key, value) in mapping.items()}
+    # id -> question
 
     if translations is not None:
         print("Cleaning from questions without translation")
@@ -34,16 +40,22 @@ def generate(input_data, mapping, ratio=0.5, max_number=None, hard_negative=None
     if max_number is None or len(max_number) == 0:
         max_number = [None] * len(input_data)
 
-    res = [_generate(data, inverse_mapping, ratio=ratio, hard_negative=hard_negative, max_number=max_n) for data, max_n in zip(input_data, max_number)]
+    res = [_generate(data, inverse_mapping, ratio=ratio, hard_negative=hard_negative,
+                     max_number=max_n, maximize_similarity=maximize_similarity) for data, max_n in zip(input_data, max_number)]
     print("Generation done!")
     return res
 
 
-def _generate(input_data, inverse_mapping, ratio=0.5, hard_negative=None, max_number=None):
+def _generate(input_data, inverse_mapping, ratio=0.5,
+              hard_negative=None, max_number=None, maximize_similarity=None, reverse=False):
 
     res = []
 
+    ####################
+    ### NORMAL CASE ####
+    ####################
     if hard_negative is None:
+        print("Starting extraction of positives and negatives")
         # adding positive candidates
         for cluster in input_data:
             if len(cluster) > 1:
@@ -64,24 +76,65 @@ def _generate(input_data, inverse_mapping, ratio=0.5, hard_negative=None, max_nu
             )
         random.shuffle(res)
 
-        if max_number is not None:
-            res = res[:min(max_number, len(res))]
+        res = res[:min(max_number, len(res))] if max_number is not None else res
 
+    #####################
+    ### HARD NEGATIVE ###
+    #####################
     else:
+        # set containing all the questions from each cluster
+        all_questions = set()
         for cluster in input_data:
+            all_questions.update(cluster)
+
+        if maximize_similarity is not None:
+            print("Computing the score for each question")
+            scores = {}
+            for i, q in enumerate(all_questions):
+                print("Elaborating question {}/{}".format(i, len(all_questions)), end='\r')
+                scores[q] = score(inverse_mapping[q])
+            print()
+
+        print("Creating dataset")
+        for c, cluster in enumerate(input_data):
+            print("Elaborating cluster {}/{}".format(c, len(input_data)), end='\r')
+            # if there is enough material in this cluster...
             if len(cluster) > 1:
+                # create list of questions from all the other clusters given by all questions - actuals
+                all_other_questions = all_questions.difference(cluster)
+
+                # for each question with index i in cluster
                 for i in range(len(cluster)):
-                    for j in range(i+1, len(cluster)):
-                        tmp = []
-                        tmp.append(
-                            [cluster[i], cluster[j], inverse_mapping[cluster[i]], inverse_mapping[cluster[j]], True]
-                        )
-                        for cc in random.sample(input_data, hard_negative - 1):
-                            qid = random.choice(cc)
+                    # range before and after or only after i
+                    second_range = list(range(i+1, len(cluster))) if not reverse else list(range(0, i)) + list(range(i+1, len(cluster)))
+                    # for each other question with index j in cluster
+                    for j in second_range:
+                        # get actual questions
+                        question_1, question_2 = cluster[i], cluster[j]
+
+                        # add positive sample and create tmp list
+                        tmp = [(question_1, question_2, inverse_mapping[question_1], inverse_mapping[question_2], True)]
+                        
+                        if maximize_similarity is not None and maximize_similarity >= hard_negative:
+                            enemies = random.sample(all_other_questions, maximize_similarity)
+                            # sorting indexes
+                            
+                            a = scores[question_1].unsqueeze(0).repeat(maximize_similarity, 1)
+                            b = torch.stack([scores[x] for x in enemies], dim=0)
+
+                            enemies_scores = cosine_similarity(a, b).detach().numpy()
+                            # sort enemies based on scores
+
+                            enemies = np.array(enemies)[np.argsort(enemies_scores)][(1 - hard_negative):]
+                        else:
+                            enemies = random.sample(all_other_questions, hard_negative - 1)
+
+                        for e in enemies:
                             tmp.append(
-                                [cluster[i], qid, inverse_mapping[cluster[i]], inverse_mapping[qid], False]
+                                [question_1, e, inverse_mapping[question_1], inverse_mapping[e], False]
                             )
                         res.append(tmp)
+        
         random.shuffle(res)
         res = [item for sublist in res for item in sublist]
     
