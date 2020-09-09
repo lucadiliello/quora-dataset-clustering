@@ -1,7 +1,6 @@
 # I/O files
 output/
 input/
-splits/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
