@@ -6,6 +6,7 @@ questions in the same cluster are labelled as duplicates (have the same meaning)
 import os
 import argparse
 import csv
+import tqdm
 
 # for testing purposes
 def all_disjoint(sets):
@@ -61,9 +62,8 @@ def cluster(input_data):
     questions = dict()
     clusters = ClusterList()
         
-    for i, row in enumerate(input_data):
-        print("Elaborating line {}".format(i), end='\r')    
-        
+    for i, row in tqdm.tqdm(enumerate(input_data), desc="Clustering"):  
+
         # Extract data
         qid_1 = int(row[1])
         qid_2 = int(row[2])

@@ -66,7 +66,7 @@ if __name__ == "__main__":
 
     # Translation
     translations = args.translation
-    
+
     # Mapping
     random.seed(args.seed)
 
@@ -89,7 +89,7 @@ if __name__ == "__main__":
         csv_reader = csv.reader(csv_file, delimiter=',')
         next(csv_reader, None)
         input_data = list(csv_reader)
-    
+
     if translations is not None:
         with open(translations) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')

@@ -9,7 +9,6 @@ import random
 import math
 import numpy as np
 from torch.nn.functional import cosine_similarity
-from similarity import score
 import torch
 
 def generate(input_data, mapping, ratio=0.5, 
@@ -88,6 +87,7 @@ def _generate(input_data, inverse_mapping, ratio=0.5,
             all_questions.update(cluster)
 
         if maximize_similarity is not None:
+            from similarity import score
             print("Computing the score for each question")
             scores = {}
             for i, q in enumerate(all_questions):
